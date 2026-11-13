@@ -1,7 +1,7 @@
 # UrbanSense AI
 
 **Evento:** AI Glasses Brasil  
-**Disciplina:** Tópicos Avançados de IA — 2026.2  
+**Disciplina:** Tópicos Avançados de IA - 2026.2  
 **Desenvolvedores:** Carlos Henrique Jeronimo Dias, Gabriel Lopes de Albuquerque e Márcio Ferreira Lima  
 **Equipe acadêmica:** Pedro Martins, Gabriel Lopes e Emanuele Maria
 
@@ -31,7 +31,7 @@ A proposta reduz a fricção do registro manual e fornece evidências visuais e 
 
 ## 3. Artigo-base
 
-**Lieskovská, Eva; Jakubec, Maroš; Bučko, Boris; Zábovská, Katarína (2023).** *Automatic pothole detection*. Transportation Research Procedia, v. 74, p. 1164–1170. TRANSCOM 2023. DOI: https://doi.org/10.1016/j.trpro.2023.11.314.
+**Lieskovská, Eva; Jakubec, Maroš; Bučko, Boris; Zábovská, Katarína (2023).** *Automatic pothole detection*. Transportation Research Procedia, v. 74, p. 1164-1170. TRANSCOM 2023. DOI: https://doi.org/10.1016/j.trpro.2023.11.314.
 
 O estudo utiliza 1.052 imagens de pavimento, com 1.896 buracos e 232 tampas de bueiro, divididas em 70% para treinamento, 15% para validação e 15% para teste. Compara Faster R-CNN, Sparse R-CNN, YOLOv3, YOLOv5 e YOLOv7. O YOLOv7 alcançou o melhor resultado, com mAP@0.5 de 0,880 e mAP@[0.5:0.95] de 0,40.
 
@@ -45,14 +45,11 @@ Embora o COCO não contenha uma classe específica para buracos, seus pesos forn
 
 ## 5. Conjunto de dados
 
-O conjunto foi obtido pela plataforma Roboflow:
-- **Workspace:** `gabriel-lopes-de-albuquerque`
-- **Projeto:** `garbage-detection-bw9fl-uek6r`
-- **Versão:** 1
-- **Total:** 1.021 imagens — 850 para treinamento, 116 para validação e 55 para teste.
-- **Classes:** `Trash` (descarte irregular e acúmulo de resíduos) e `pothole` (buracos e avarias no pavimento).
+O conjunto de dados utilizado pelo projeto foi obtido na plataforma Figshare, no repositório intitulado: **"Pothole detection using computer vision in challenging conditions"** (https://figshare.com/).
 
-As anotações originais são heterogêneas: `Trash` utiliza caixas retangulares e `pothole` utiliza polígonos de segmentação. Como o detector trabalha com *bounding boxes*, a etapa `prepare_dataset.py` converte cada polígono na menor caixa retangular que o contém. Essa conversão é necessária para que as anotações de buracos não sejam descartadas durante o treinamento.
+Esse conjunto foi escolhido porque reúne imagens de pavimento em condições visuais desafiadoras, como variações de iluminação, sombras, ruído e texturas heterogêneas, o que torna a base mais adequada para avaliar o desempenho real do modelo em cenários urbanos. A estrutura do dataset foi adaptada ao pipeline do projeto, com a preparação das anotações para a detecção de buracos e resíduos em formato compatível com o YOLO11n.
+
+As anotações foram revisadas e padronizadas para manter consistência entre as classes e facilitar o treinamento. Como o detector trabalha com *bounding boxes*, a etapa `prepare_dataset.py` converte as marcações para o formato exigido pelo modelo, preservando o objetivo principal de detectar irregularidades no pavimento com robustez.
 
 ## 6. Arquitetura e checkpoints
 
@@ -63,9 +60,9 @@ As anotações originais são heterogêneas: `Trash` utiliza caixas retangulares
 
 ## 7. Plano de adaptação e avaliação
 
-O treinamento foi realizado no Google Colab com GPU NVIDIA T4, utilizando Python, PyTorch, Ultralytics e Roboflow. O pipeline mantém o preparo das anotações e o ajuste fino do YOLO11n. Foram avaliadas execuções com 50, 100 e 200 épocas, resolução de 640 pixels e parada antecipada com paciência de 10 épocas.
+O treinamento foi realizado no Google Colab com GPU NVIDIA T4, utilizando Python, PyTorch, Ultralytics e o dataset do Figshare. O pipeline mantém o preparo das anotações e o ajuste fino do YOLO11n. Foram avaliadas execuções com 50, 100 e 200 épocas, resolução de 640 pixels e parada antecipada com paciência de 10 épocas.
 
-A avaliação considera tempo de execução, mAP@0.5 e mAP@[0.5:0.95], no resultado geral e por classe. O baseline é o treinamento local em CPU, mantendo arquitetura, dados e configuração comparáveis. Nos experimentos, o treinamento em CPU levou aproximadamente 250–300 segundos por época, enquanto a GPU T4 levou cerca de 15 segundos.
+A avaliação considera tempo de execução, mAP@0.5 e mAP@[0.5:0.95], no resultado geral e por classe. O baseline é o treinamento local em CPU, mantendo arquitetura, dados e configuração comparáveis. Nos experimentos, o treinamento em CPU levou aproximadamente 250-300 segundos por época, enquanto a GPU T4 levou cerca de 15 segundos.
 
 O melhor resultado de validação reportado foi de aproximadamente **81,8% de mAP@0.5** (95,9% para buracos e 67,8% para resíduos). O conjunto de teste possui apenas uma instância de resíduos, o que impede uma avaliação estatisticamente confiável dessa classe; por isso, a análise principal utiliza a validação. O treinamento apresentou saturação próxima desse resultado, com melhor época em 92 e parada antecipada na época 102.
 
@@ -77,36 +74,9 @@ O melhor resultado de validação reportado foi de aproximadamente **81,8% de mA
 - **Gabriel:** preparação do conjunto de dados, revisão das anotações e treinamento do YOLO11n.
 - **Pedro:** avaliação dos resultados, comparação com o baseline em CPU, análise das métricas e documentação.
 
-## 8. Exceções e contingências
-
-| Cenário | Comportamento |
-|---|---|
-| Sem conectividade | Imagem, GPS e metadados são armazenados localmente para reenvio. O usuário recebe aviso por voz. |
-| GPS indisponível | Utiliza a última posição conhecida, marcada com precisão reduzida; o fluxo não é bloqueado. |
-| Nenhuma irregularidade detectada | Captura manual é encaminhada para validação humana; captura automática é descartada silenciosamente. |
-| Permissão de câmera negada | O aplicativo solicita acesso; se negado, desativa a captura silenciosa. |
-| Bateria dos óculos abaixo de 15% | Captura automática é pausada; permanecem disponíveis capturas manuais. |
-| Óculos desconectados ou dobradiça fechada | O fluxo dos óculos é encerrado e o aplicativo passa a usar a câmera do celular. |
-
-## 9. Decisões técnicas e trade-offs
-
-1. **Inferência no servidor:** o YOLO é executado na API FastAPI, e não no dispositivo. Isso evita consumo adicional de bateria, distribuição dos pesos e diferenças de desempenho entre aparelhos. Em contrapartida, exige conectividade e adiciona latência, mitigadas pela fila local de reenvio.
-2. **Modelo especializado:** o YOLO11n foi ajustado para as classes necessárias ao projeto. Modelos genéricos sem ajuste foram descartados por não contemplarem a taxonomia urbana. O desempenho, porém, depende da qualidade e representatividade do dataset.
-3. **Captura condicionada ao movimento:** imagens são capturadas a cada 10 segundos durante caminhada ou corrida; em repouso, câmera e GPS ficam suspensos. Isso economiza bateria, mas pode deixar ocorrências entre capturas sem registro.
-4. **Backend unificado em Python:** FastAPI e inferência compartilham o mesmo ecossistema, simplificando integração e implantação. O acoplamento pode exigir ajustes de escalabilidade conforme aumente a carga.
-5. **VPS dedicada:** a API foi implantada em VPS Oracle Cloud Free com Docker Compose. A opção foi preferida a PaaS gratuitas que apresentaram *cold start* de aproximadamente dois minutos; na VPS, as respostas ficaram em torno de 5 a 10 segundos. A contrapartida é administrar o servidor Linux e os contêineres.
-
-## 10. Originalidade e comparação com soluções existentes
-
-**Colab:** permite que cidadãos registrem problemas urbanos e acompanhem solicitações, mas depende de interação manual pelo celular, incluindo fotografia, classificação e descrição.
-
-**Fiscalize Fortaleza:** encaminha denúncias à fiscalização municipal e fornece protocolo rastreável, mas exige identificação e preenchimento de formulário.
-
-**Diferencial do UrbanSense:** combina captura sem as mãos durante o deslocamento, uso de um wearable já utilizado pelo cidadão, classificação automática especializada em resíduos e buracos, georreferenciamento e encaminhamento com retorno por voz. Em vez de depender exclusivamente de denúncias digitadas ou de sensores instalados pela prefeitura, utiliza a circulação cotidiana dos cidadãos como fonte distribuída de observações.
-
 O princípio de privacidade do projeto é **“registrar o problema, não a pessoa”**: o objetivo é mapear a irregularidade urbana, e não identificar quem a causou.
 
-## 11. Repositório de treinamento — Garbage Detection Training
+## 11. Repositório de treinamento - Garbage Detection Training
 
 O repositório de treinamento é um ambiente isolado de estudo e prova de conceito; não integra diretamente o aplicativo nem o backend de produção.
 
@@ -137,13 +107,11 @@ python -m venv .venv
 .venv/Scripts/python.exe -m pip install -r requirements.txt
 ```
 
-Copie `.env.example` para `.env` e informe a chave da API do Roboflow, disponível em https://app.roboflow.com/settings/api.
-
 ### Treinamento no Colab
 
 1. Abra `colab_train.ipynb` no Google Colab.
 2. Selecione **Ambiente de execução → Alterar o tipo de ambiente de execução → GPU**.
-3. Execute todas as células e informe a chave do Roboflow quando solicitada.
+3. Execute todas as células e ajuste o caminho do dataset conforme a estrutura local do projeto.
 4. Baixe o modelo e os gráficos gerados pela última célula.
 
 O notebook instala as dependências, baixa o conjunto de dados e prepara as anotações automaticamente. Para uma nova rodada, ajuste `EPOCHS`.
