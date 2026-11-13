@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.ipynb_checkpoints/
+
+# Pacotes e builds
+build/
+dist/
+*.egg-info/
+
+# Ambientes e credenciais — NUNCA versionar
+.env
+*.pem
+*.key
+credentials.json
+secrets/
+
+# Dados e artefatos pesados — usar link externo (Drive/Hugging Face)
+data/*
+!data/.gitkeep
+*.csv
+*.json
+*.parquet
+*.zip
+*.tar.gz
+*.h5
+*.pkl
+*.pt
+*.pth
+*.onnx
+*.safetensors
+*.ckpt
+
+# Mas mantenha versões pequenas e essenciais, se necessário:
+!data/exemplo-pequeno.csv
+
+# Sistema operacional / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
