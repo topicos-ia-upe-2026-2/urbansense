@@ -1,0 +1,35 @@
+# CI básica: verifica que o projeto está executável e sem arquivos pesados
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  checagens:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Instalar dependências
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Compilar todos os arquivos Python (sintaxe)
+        run: |
+          if compgen -G "src/**/*.py" > /dev/null; then
+            python -m compileall src
+          else
+            echo "Sem arquivos Python em src/ ainda."
+          fi
+
+      - name: Falhar se houver arquivo maior que 50 MB
+        run: |
+          FOUND=$(find . -type f -size +50M -not -path "./.git/*" || true)
+          if [ -n "$FOUND" ]; then
+            echo "Arquivos grandes demais para o repositório:"
+            echo "$FOUND"
+            echo "Use link externo (Drive/Hugging Face) conforme o README."
+            exit 1
+          fi
