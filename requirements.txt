@@ -1,7 +1,11 @@
-# Dependências do projeto — atualizar conforme a etapa
-# Exemplos (remover o que não usar):
-# torch
-# transformers
-# datasets
-# scikit-learn
-# streamlit
+# Versões usadas no fine-tuning inicial (ver artifacts/potholes-yolo11n-finetuning-v1/pip_freeze.txt)
+ultralytics==8.4.216
+torch==2.11.0
+torchvision==0.26.0
+numpy==2.3.0
+pandas==2.3.0
+matplotlib==3.10.8
+opencv-python==5.1.0.95
+PyYAML==6.0.3
+scikit-learn==1.8.0
+pillow
