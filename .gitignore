@@ -42,5 +42,4 @@ Thumbs.db
 .vscode/
 .idea/
 
-# Dataset local (somente leitura, nao versionar)
-Potholes_dataset/
+*/runs

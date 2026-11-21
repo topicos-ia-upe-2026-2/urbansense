@@ -33,7 +33,7 @@ A proposta reduz a fricção do registro manual e fornece evidências visuais e 
 Título: Automatic pothole detection, publicado na Transportation Research Procedia, v. 74, p. 1164–1170, nos anais da TRANSCOM 2023: 15th International Scientific Conference on Sustainable, Modern and Safe Transport.
 Autores: Eva Lieskovská, Maroš Jakubec, Boris Bučko e Katarína Zábovská.
 Ano: 2023.
-DOI: https://doi.org/10.1016/j.trpro.2023.11.314
+DOI: https://doi.org/10.1016/j.trpro.2023.11.257
 Método: o conjunto de dados do artigo é composto por imagens de 1920 × 1080 pixels do pavimento de uma via do distrito industrial de uma cidade, extraídas de vídeos e nomeadas como Vid (ID do dia) _ (direção) _ (ID do quadro). Foram anotadas 1052 imagens, com 1896 buracos e 232 tampas de bueiro (esta segunda classe foi adicionada para evitar que tampas circulares fossem confundidas com buracos), em condições de boa visibilidade. Os dados foram divididos em 70% para treinamento, 15% para validação e 15% para teste. Para a detecção de objetos, foram comparados cinco métodos:
 Faster R-CNN: detector de dois estágios amplamente utilizado, com precisão comparável à de outros detectores de última geração. Uma rede separada identifica as propostas de regiões, no lugar da busca seletiva. No experimento, apresentou o pior desempenho.
 Sparse R-CNN: utiliza um conjunto esparso e fixo de propostas de objetos treináveis, sem etapa de supressão de não máximos, e apresentou resultados comparáveis aos do YOLOv3 em mAP.
@@ -53,7 +53,7 @@ Relação com o artigo: o artigo compara YOLOv3, YOLOv5 e YOLOv7 na detecção d
 
 ## 5. Conjunto de dados
 
-O conjunto de dados utilizado pelo projeto foi obtido na plataforma Figshare, no repositório intitulado: *"Pothole detection using computer vision in challenging conditions"* (https://figshare.com/).
+O conjunto de dados utilizado pelo projeto foi obtido na plataforma Figshare, no repositório intitulado: *"Pothole detection using computer vision in challenging conditions"* (https://doi.org/10.6084/m9.figshare.21214400).
 
 ### 5.1 Classes
 
@@ -180,4 +180,3 @@ A imagem com as detecções será salva em runs/predictions/. Por padrão, é ut
 2. prepare_dataset.py: corrige os caminhos do data.yaml, converte polígonos em caixas delimitadoras e remove caches de anotações.
 3. train.py: executa o treinamento do YOLO.
 4. evaluate.py: gera métricas e avaliação visual.
-
