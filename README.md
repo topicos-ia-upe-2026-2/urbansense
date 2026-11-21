@@ -153,8 +153,8 @@ Execute `src/pre-processamento.ipynb`. Ele valida as imagens e anotações, divi
 
 Execute `src/finetuning.ipynb`. Parâmetros no próprio notebook (YOLO11n pré-treinado, 640 px, batch 8, paciência 10, semente 42). Ele treina, avalia o `best.pt` no conjunto de teste, salva métricas por classe, curvas e o registro do experimento em `artifacts/`. Para GPU (por exemplo, Colab com T4), altere `DEVICE` e `BATCH_SIZE` na célula de configuração.
 
-### 5. Pesos treinados
+### 5. Resultados e pesos
 
-Os pesos (`best.pt`) não são versionados (`*.pt` está no `.gitignore`). Link para download: **PENDENTE — preencher com o link externo**.
+Os resultados do fine-tuning (curvas, matrizes de confusão, métricas e imagens com detecções) estão versionados em `runs/potholes-yolo11n-finetuning-v1/` (treino/validação) e `runs/potholes-yolo11n-finetuning-v1-test/` (teste). O registro do experimento, as curvas e o `pip_freeze.txt` ficam em `artifacts/potholes-yolo11n-finetuning-v1/`.
 
-Para usar: `YOLO("best.pt")` com a biblioteca `ultralytics`.
+Os arquivos de pesos (`*.pt`) não são versionados. Eles são gerados ao executar `src/finetuning.ipynb` e ficam em `runs/potholes-yolo11n-finetuning-v1/weights/best.pt`. Para usar: `YOLO("best.pt")` com a biblioteca `ultralytics`.
