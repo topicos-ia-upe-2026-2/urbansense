@@ -116,67 +116,45 @@ O melhor resultado de validação reportado foi de aproximadamente *81,8% de mAP
 
 O princípio de privacidade do projeto é *“registrar o problema, não a pessoa”*: o objetivo é mapear a irregularidade urbana, e não identificar quem a causou.
 
-## 11. Repositório de treinamento - Garbage Detection Training
+## 11. Como executar (treinamento e avaliação)
 
-O repositório de treinamento é um ambiente isolado de estudo e prova de conceito; não integra diretamente o aplicativo nem o backend de produção.
+O treinamento é um ambiente isolado de estudo e prova de conceito; não integra o aplicativo nem o backend de produção. Todo o código está em dois notebooks em `src/`.
 
-### Estrutura principal
+### Estrutura
 
-text
+```text
 src/
-├── pipeline/
-│   ├── download_dataset.py
-│   ├── prepare_dataset.py
-│   ├── train.py
-│   ├── resume_train.py
-│   └── evaluate.py
-├── app/
-│   ├── predict.py
-│   └── serve.py
-├── resultados/
-├── colab_train.ipynb
-├── data/       # dataset baixado; não versionar
-└── runs/       # saídas locais; não versionar
+├── pre-processamento.ipynb   # validação do dataset e divisão 70/15/15
+└── finetuning.ipynb          # fine-tuning do YOLO11n, avaliação e registro
+data/                         # dataset (não versionado)
+runs/                         # saídas do Ultralytics
+artifacts/                    # evidências (curvas, métricas, pip_freeze)
+```
 
+### 1. Ambiente
 
-### Instalação no Windows
-
-powershell
-cd src
+```powershell
 python -m venv .venv
-.venv/Scripts/python.exe -m pip install -r requirements.txt
+.venv\Scripts\python.exe -m pip install -r requirements.txt
+```
 
+Os notebooks localizam a raiz do projeto procurando uma pasta chamada `urbansense`; mantenha esse nome ao clonar.
 
-### Treinamento no Colab
+### 2. Dataset (não está no repositório)
 
-1. Abra colab_train.ipynb no Google Colab.
-2. Selecione *Ambiente de execução → Alterar o tipo de ambiente de execução → GPU*.
-3. Execute todas as células e ajuste o caminho do dataset conforme a estrutura local do projeto.
-4. Baixe o modelo e os gráficos gerados pela última célula.
+1. Baixe o dataset no Figshare: https://doi.org/10.6084/m9.figshare.21214400
+2. Extraia as imagens e anotações (`.jpg` + `.txt` no formato YOLO) em `data/dataset/`.
 
-O notebook instala as dependências, baixa o conjunto de dados e prepara as anotações automaticamente. Para uma nova rodada, ajuste EPOCHS.
+### 3. Pré-processamento
 
-### Treinamento local e avaliação
+Execute `src/pre-processamento.ipynb`. Ele valida as imagens e anotações, divide em treino/validação/teste (70/15/15, semente 42, estratificada) e gera `data/Potholes_dataset_dividido/` com `data.yaml` e `manifest.csv`.
 
-powershell
-.venv/Scripts/python.exe pipeline/download_dataset.py
-.venv/Scripts/python.exe pipeline/train.py
-.venv/Scripts/python.exe pipeline/evaluate.py
+### 4. Fine-tuning e avaliação
 
+Execute `src/finetuning.ipynb`. Parâmetros no próprio notebook (YOLO11n pré-treinado, 640 px, batch 8, paciência 10, semente 42). Ele treina, avalia o `best.pt` no conjunto de teste, salva métricas por classe, curvas e o registro do experimento em `artifacts/`. Para GPU (por exemplo, Colab com T4), altere `DEVICE` e `BATCH_SIZE` na célula de configuração.
 
-Para retomar um treinamento interrompido, execute pipeline/resume_train.py. O YOLO salva checkpoints ao final de cada época.
+### 5. Resultados e pesos
 
-### Teste de inferência
+Os resultados do fine-tuning (curvas, matrizes de confusão, métricas e imagens com detecções) estão versionados em `runs/potholes-yolo11n-finetuning-v1/` (treino/validação) e `runs/potholes-yolo11n-finetuning-v1-test/` (teste). O registro do experimento, as curvas e o `pip_freeze.txt` ficam em `artifacts/potholes-yolo11n-finetuning-v1/`.
 
-powershell
-.venv/Scripts/python.exe app/predict.py caminho/para/sua_foto.jpg
-
-
-A imagem com as detecções será salva em runs/predictions/. Por padrão, é utilizado runs/garbage-detector/weights/best.pt.
-
-### Pipeline resumido
-
-1. download_dataset.py: baixa e organiza o conjunto de dados.
-2. prepare_dataset.py: corrige os caminhos do data.yaml, converte polígonos em caixas delimitadoras e remove caches de anotações.
-3. train.py: executa o treinamento do YOLO.
-4. evaluate.py: gera métricas e avaliação visual.
+Os arquivos de pesos (`*.pt`) não são versionados. Eles são gerados ao executar `src/finetuning.ipynb` e ficam em `runs/potholes-yolo11n-finetuning-v1/weights/best.pt`. Para usar: `YOLO("best.pt")` com a biblioteca `ultralytics`.

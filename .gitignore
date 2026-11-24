@@ -41,3 +41,8 @@ data/*
 Thumbs.db
 .vscode/
 .idea/
+
+*/runs
+
+# Dataset bruto (baixar do Figshare, ver README)
+Potholes_dataset/
