@@ -1,7 +1,7 @@
 # Registro do experimento — Fine-tuning inicial
 
 Responsável: PEDRO
-Data: 2026-11-21 17:17:37 Hora Padrão de Buenos Aires
+Data: 2026-11-27 15:33:51 Hora Padrão de Buenos Aires
 Tipo de execução: Fine-tuning inicial (YOLO11n)
 
 ## Configuração
